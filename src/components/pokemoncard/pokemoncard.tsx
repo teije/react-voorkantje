@@ -42,6 +42,11 @@ export function PokemonCard({ name }: { name: string }) {
 
       {pokemon && (
         <>
+          
+          {pokemon.typeImages.map((typeImage, i) => (
+            <img className="pokemon-type-img" key={`${pokemon.name}-type-${i}`} src={typeImage} alt="type" />
+          ))}
+
           <h3>
             #{pokemon.id} {pokemon.name}
           </h3>

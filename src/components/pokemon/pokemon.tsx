@@ -8,6 +8,7 @@ export type PokemonData = {
   backImage: string;
   types: string[];
   cry: string;
+  typeImages: string[];
 };
 
 export function Pokemon({
@@ -22,7 +23,8 @@ export function Pokemon({
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    getPokemonByName(name).then(pokemon => {
+    getPokemonByName(name)
+    .then(pokemon => {
       setPokemon(pokemon);
       onLoaded(pokemon);
 
@@ -61,12 +63,36 @@ async function getPokemonByName(name: string): Promise<PokemonData> {
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
   const data = await res.json();
 
+  const types = data.types.map(
+    (t: { type: { name: string } }) => t.type.name
+  );
+
+  const typeImages = await getPokemonTypeImages(types);
+
   return {
     id: data.id,
     name: data.name,
     frontImage: data.sprites.front_default,
     backImage: data.sprites.back_default,
-    types: data.types.map((t: any) => t.type.name),
+    types,
     cry: data.cries.legacy,
+    typeImages,
   };
+}
+
+  async function getPokemonTypeImage(typeName: string): Promise<string | null> {
+    const res = await fetch(`https://pokeapi.co/api/v2/type/${typeName}`);
+    const data = await res.json();
+
+    return (
+        data.sprites?.["generation-vii"]?.["lets-go-pikachu-lets-go-eevee"]
+        ?.symbol_icon ?? null
+    );
+}
+async function getPokemonTypeImages(types: string[]): Promise<string[]> {
+  const images = await Promise.all(
+    types.map(type => getPokemonTypeImage(type))
+  );
+
+  return images.filter((img): img is string => Boolean(img));
 }

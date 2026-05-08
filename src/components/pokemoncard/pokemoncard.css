@@ -31,3 +31,7 @@
 .pokemon-card i {
   color:darkslategrey;
 }
+
+.pokemon-type-img {
+  width: 15%;
+}
