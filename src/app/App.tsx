@@ -1,13 +1,16 @@
-import { PokemonCard } from "./../components/pokemoncard/pokemon_card";
+import "./App.css";
+import { PokemonCard } from "../components/pokemoncard/pokemoncard";
 
 function App() {
   return (
     <>
-      <PokemonCard name="ditto" />
-      <PokemonCard name="charmander" />
-      <PokemonCard name="pikachu" />
-      <PokemonCard name="raichu" />
-      <PokemonCard name="onix" />
+      <div className="pokemon-grid">
+        <PokemonCard name="ditto" />
+        <PokemonCard name="charmander" />
+        <PokemonCard name="pikachu" />
+        <PokemonCard name="raichu" />
+        <PokemonCard name="onix" />
+      </div>
     </>
   );
 }
