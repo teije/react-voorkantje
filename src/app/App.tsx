@@ -5,14 +5,17 @@ function App() {
   return (
     <>
       <div className="pokemon-grid">
-        <PokemonCard name="ditto" />
-        <PokemonCard name="charmander" />
-        <PokemonCard name="pikachu" />
-        <PokemonCard name="raichu" />
-        <PokemonCard name="onix" />
+            {render151()}
       </div>
     </>
   );
 }
+
+function render151() {
+  return Array.from({ length: 151 }, (_, i) => (
+    <PokemonCard name={(i + 1).toString()} />
+  ));
+}
+
 
 export default App;
