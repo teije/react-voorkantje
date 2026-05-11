@@ -23,28 +23,40 @@ export function Pokemon({
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    getPokemonByName(name)
-    .then(pokemon => {
-      setPokemon(pokemon);
-      onLoaded(pokemon);
+    let cancelled = false;
 
-      audioRef.current = new Audio(pokemon.cry);
+    async function load() {
+      const data = await getPokemonByName(name);
+      if (cancelled) return;
+
+      setPokemon(data);
+      onLoaded(data);
+
+      audioRef.current = new Audio(data.cry);
       audioRef.current.volume = 0.6;
-    });
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
   }, [name, onLoaded]);
 
   function handleMouseEnter() {
+    if (!audioRef.current) return;
     setShowBack(true);
-    audioRef.current?.play().catch(() => {});
+    audioRef.current.currentTime = 0;
+    audioRef.current.play().catch(() => {});
   }
 
   function handleMouseLeave() {
     setShowBack(false);
+    if (!audioRef.current) return;
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
   }
 
-  if (!pokemon) {
-    return <div className="pokemon">Loading Pokémon…</div>;
-  }
+  if (!pokemon) return null;
 
   return (
     <div className="pokemon">

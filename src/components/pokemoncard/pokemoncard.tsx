@@ -24,27 +24,42 @@ const TYPE_COLORS: Record<string, string> = {
   fairy: "#caaaba",
 };
 
-export function PokemonCard({ name }: { name: string }) {
+export function PokemonCard({
+  name,
+  onReady,
+}: {
+  name: string;
+  onReady: () => void;
+}) {
   const [pokemon, setPokemon] = useState<PokemonData | null>(null);
   const [cardColor, setCardColor] = useState("#E5E5E5");
 
-  function handlePokemonLoaded(pokemon: PokemonData) {
-    setPokemon(pokemon);
-    const primaryType = pokemon.types[0];
-    setCardColor(TYPE_COLORS[primaryType] ?? "#E5E5E5");
+  function handlePokemonLoaded(data: PokemonData) {
+    setPokemon(data);
+    setCardColor(TYPE_COLORS[data.types[0]] ?? "#E5E5E5");
   }
 
   return (
     <div className="pokemon-card" style={{ backgroundColor: cardColor }}>
       <div className="image-frame">
-        <Pokemon name={name} onLoaded={handlePokemonLoaded} />
+        <Pokemon
+          name={name}
+          onLoaded={(data) => {
+            handlePokemonLoaded(data);
+            onReady();
+          }}
+        />
       </div>
 
       {pokemon && (
         <>
-          
-          {pokemon.typeImages.map((typeImage, i) => (
-            <img className="pokemon-type-img" key={`${pokemon.name}-type-${i}`} src={typeImage} alt="type" />
+          {pokemon.typeImages.map((img, i) => (
+            <img
+              className="pokemon-type-img"
+              key={`${pokemon.name}-${i}`}
+              src={img}
+              alt="type"
+            />
           ))}
 
           <h3>
