@@ -51,9 +51,6 @@ export function Pokemon({
 
   function handleMouseLeave() {
     setShowBack(false);
-    if (!audioRef.current) return;
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
   }
 
   if (!pokemon) return null;
