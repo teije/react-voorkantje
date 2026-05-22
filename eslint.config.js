@@ -14,9 +14,17 @@ export default defineConfig([
       tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
+      prettierConfig, // disabled conflicting ESLint rules
     ],
-    languageOptions: {
-      globals: globals.browser,
+    plugins: {
+      prettier: prettierPlugin
     },
+    rules: {
+      'prettier/prettier': 'error' // run Prettier via ESLint
+    },
+    languageOptions: {
+      globals: globals.browser
+    }
+
   },
 ])
