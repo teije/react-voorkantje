@@ -35,3 +35,8 @@
 .pokemon-type-img {
   width: 15%;
 }
+
+.stat-hp {
+  display: block;
+  text-align: right;
+}

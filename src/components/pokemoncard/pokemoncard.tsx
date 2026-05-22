@@ -26,9 +26,11 @@ const TYPE_COLORS: Record<string, string> = {
 
 export function PokemonCard({
   name,
+  enableCry,
   onReady,
 }: {
   name: string;
+  enableCry: boolean;
   onReady: () => void;
 }) {
   const [pokemon, setPokemon] = useState<PokemonData | null>(null);
@@ -41,9 +43,11 @@ export function PokemonCard({
 
   return (
     <div className="pokemon-card" style={{ backgroundColor: cardColor }}>
+      <i className="stat-hp">HP: {pokemon?.hp}</i>
       <div className="image-frame">
         <Pokemon
           name={name}
+          enableCry={enableCry}
           onLoaded={(data) => {
             handlePokemonLoaded(data);
             onReady();

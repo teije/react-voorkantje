@@ -9,13 +9,16 @@ export type PokemonData = {
   types: string[];
   cry: string;
   typeImages: string[];
+  hp: number;
 };
 
 export function Pokemon({
   name,
+  enableCry,
   onLoaded,
 }: {
   name: string;
+  enableCry: boolean;
   onLoaded: (pokemon: PokemonData) => void;
 }) {
   const [pokemon, setPokemon] = useState<PokemonData | null>(null);
@@ -28,23 +31,29 @@ export function Pokemon({
     async function load() {
       const data = await getPokemonByName(name);
       if (cancelled) return;
-
+      if (enableCry) loadCry(data);
+ 
       setPokemon(data);
       onLoaded(data);
-
-      audioRef.current = new Audio(data.cry);
-      audioRef.current.volume = 0.6;
     }
 
     load();
     return () => {
       cancelled = true;
     };
-  }, [name, onLoaded]);
+  }, [name, onLoaded, enableCry]);
+
+  function loadCry(data: PokemonData)
+  {
+      audioRef.current = new Audio(data.cry);
+      audioRef.current.volume = 0.6;
+  }
 
   function handleMouseEnter() {
-    if (!audioRef.current) return;
     setShowBack(true);
+    
+    if (!enableCry || !audioRef.current) return;
+
     audioRef.current.currentTime = 0;
     audioRef.current.play().catch(() => {});
   }
@@ -77,6 +86,7 @@ async function getPokemonByName(name: string): Promise<PokemonData> {
   );
 
   const typeImages = await getPokemonTypeImages(types);
+  const STATS_HP_INDEX = 0;
 
   return {
     id: data.id,
@@ -86,6 +96,7 @@ async function getPokemonByName(name: string): Promise<PokemonData> {
     types,
     cry: data.cries.legacy,
     typeImages,
+    hp: data.stats[STATS_HP_INDEX].base_stat,
   };
 }
 
