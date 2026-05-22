@@ -26,10 +26,16 @@
 .pokemon-card h3 {
   text-transform: capitalize;
   font-weight: bold;
-  color:darkslategrey;
+  color: darkslategrey;
 }
+
 .pokemon-card i {
-  color:darkslategrey;
+  color: darkslategrey;
+}
+
+.pokemon-card strong {
+  color: darkslategrey;
+  padding-bottom: 10px;
 }
 
 .pokemon-type-img {
