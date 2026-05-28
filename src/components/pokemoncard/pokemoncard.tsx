@@ -25,18 +25,17 @@ const TYPE_COLORS: Record<string, string> = {
 }
 
 export function PokemonCard({
-  name,
+  id,
   enableCry,
-  onReady,
 }: {
-  name: string
+  id: number
   enableCry: boolean
-  onReady: () => void
 }) {
   const [pokemon, setPokemon] = useState<PokemonData | null>(null)
   const [cardColor, setCardColor] = useState('#E5E5E5')
 
   function handlePokemonLoaded(data: PokemonData) {
+    console.log('Pokemon id' + id)
     setPokemon(data)
     setCardColor(TYPE_COLORS[data.types[0]] ?? '#E5E5E5')
   }
@@ -46,30 +45,27 @@ export function PokemonCard({
       <strong className="stat-hp">HP: {pokemon?.hp}</strong>
       <div className="image-frame">
         <Pokemon
-          name={name}
+          id={id}
           enableCry={enableCry}
           onLoaded={(data) => {
             handlePokemonLoaded(data)
-            onReady()
           }}
         />
       </div>
 
       {pokemon && (
         <>
-          {pokemon.typeImages.map((img, i) => (
-            <img
-              className="pokemon-type-img"
-              key={`${pokemon.name}-${i}`}
-              src={img}
-              alt="type"
-            />
-          ))}
+          <div className="types-row">
+            {pokemon.typeImages.map((img, i) => (
+              <img className="pokemon-type-img" key={i} src={img} alt="type" />
+            ))}
+          </div>
 
           <h3>
             #{pokemon.id} {pokemon.name}
           </h3>
-          <i className="types">{pokemon.types.join(', ')}</i>
+
+          <i>{pokemon.types.join(', ')}</i>
         </>
       )}
     </div>

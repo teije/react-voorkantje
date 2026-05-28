@@ -1,19 +1,10 @@
 import { useState } from 'react'
 import './App.css'
-import { PokemonCard } from '../components/pokemoncard/pokemoncard'
 import { CheckboxLabeled } from '../components/checkbox-labeled/checkbox-labeled'
-
-const TOTAL = 10
+import { Stepper } from '../components/stepper/stepper'
 
 function App() {
-  const [visibleCount, setVisibleCount] = useState(1)
   const [enableCry, setEnableCry] = useState(false)
-
-  function handleCardReady(index: number) {
-    setVisibleCount((current) =>
-      index === current - 1 ? Math.min(current + 1, TOTAL) : current,
-    )
-  }
 
   return (
     <>
@@ -23,27 +14,9 @@ function App() {
         onCheckboxEnabled={setEnableCry}
       />
 
-      <div className="pokemon-grid">
-        {render151(visibleCount, enableCry, handleCardReady)}
-      </div>
+      <Stepper enableCry={enableCry} />
     </>
   )
-}
-
-function render151(
-  visibleCount: number,
-  enableCry: boolean,
-  onReady: (index: number) => void,
-) {
-  return Array.from({ length: visibleCount }, (_, i) => (
-    <div key={i + 1} className="pokemon-slot show">
-      <PokemonCard
-        name={(i + 1).toString()}
-        enableCry={enableCry}
-        onReady={() => onReady(i)}
-      />
-    </div>
-  ))
 }
 
 export default App

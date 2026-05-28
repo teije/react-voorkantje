@@ -13,11 +13,11 @@ export type PokemonData = {
 }
 
 export function Pokemon({
-  name,
+  id: id,
   enableCry,
   onLoaded,
 }: {
-  name: string
+  id: number
   enableCry: boolean
   onLoaded: (pokemon: PokemonData) => void
 }) {
@@ -29,7 +29,7 @@ export function Pokemon({
     let cancelled = false
 
     async function load() {
-      const data = await getPokemonByName(name)
+      const data = await getPokemonById(id)
       if (cancelled) return
       if (enableCry) loadCry(data)
 
@@ -41,7 +41,7 @@ export function Pokemon({
     return () => {
       cancelled = true
     }
-  }, [name, onLoaded, enableCry])
+  }, [id, enableCry])
 
   function loadCry(data: PokemonData) {
     audioRef.current = new Audio(data.cry)
@@ -76,8 +76,8 @@ export function Pokemon({
   )
 }
 
-async function getPokemonByName(name: string): Promise<PokemonData> {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+async function getPokemonById(id: number): Promise<PokemonData> {
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id.toString()}`)
   const data = await res.json()
 
   const types = data.types.map((t: { type: { name: string } }) => t.type.name)

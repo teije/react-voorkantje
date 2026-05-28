@@ -1,0 +1,62 @@
+body {
+  background: #f2f2f2;
+  font-family: system-ui, sans-serif;
+}
+
+.stepper {
+  width: 100%;
+  background: #e9e9e9;
+  border-radius: 0;
+}
+
+/* STEP ROW */
+.steps {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 40px;
+}
+
+/* STEP CIRCLES */
+.step {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex: 0 0 auto;
+}
+
+/* ACTIVE STEP */
+.step.active {
+  background: #4f46e5;
+  color: white;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* MESSAGE */
+.message {
+  text-align: center;
+  font-size: 28px;
+  padding: 40px 20px;
+  margin: 0;
+}
+
+/* BUTTON ROW */
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px 30px;
+}
+
+/* BUTTONS */
+button {
+  background: #d6d6d6;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #c9c9c9;
+}
