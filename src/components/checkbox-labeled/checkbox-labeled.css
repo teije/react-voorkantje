@@ -1,0 +1,61 @@
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0b0d12;
+  padding: 14px 18px;
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+}
+
+/* Label */
+.checkbox-label {
+  font-size: 22px;
+  color: #cfd6e6;
+}
+
+/* Hide native checkbox */
+.checkbox-row input {
+  display: none;
+}
+
+/* Custom box */
+.checkmark {
+  width: 20px;
+  height: 20px;
+  background: #2f3441;
+  border: 2px solid #3a3f4b;
+  border-radius: 4px; /* square with slight rounding */
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Checked state */
+.checkbox-row input:checked + .checkmark {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Check icon */
+.checkmark::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s ease;
+}
+
+/* Show check */
+.checkbox-row input:checked + .checkmark::after {
+  transform: rotate(45deg) scale(1);
+}
+
+/* Hover */
+.checkbox-row:hover .checkmark {
+  border-color: #5a6070;
+}

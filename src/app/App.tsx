@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import { PokemonCard } from '../components/pokemoncard/pokemoncard'
-import { ToggleButton } from '../components/togglebutton/togglebutton'
+import { CheckboxLabeled } from '../components/checkbox-labeled/checkbox-labeled'
 
 const TOTAL = 10
 
@@ -17,10 +17,10 @@ function App() {
 
   return (
     <>
-      <ToggleButton
+      <CheckboxLabeled
         label="Toggle Pokémon cries on hover"
         enabled={enableCry}
-        onToggleEnabled={setEnableCry}
+        onCheckboxEnabled={setEnableCry}
       />
 
       <div className="pokemon-grid">
