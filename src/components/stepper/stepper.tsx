@@ -2,15 +2,24 @@ import { useState } from 'react'
 import './stepper.css'
 import { PokemonCard } from '../pokemoncard/pokemoncard'
 
-export function Stepper({ enableCry }: { enableCry: boolean }) {
-  const [currentStep, setCurrentStep] = useState(0)
+export function Stepper({
+  initialStep: initialStep,
+  maxAdditonalStep: maxAdditionalStep,
+  enableCry,
+}: {
+  initialStep: number
+  maxAdditonalStep: number
+  enableCry: boolean
+}) {
+  const [currentStep, setCurrentStep] = useState(initialStep)
 
   function handlePrevious() {
-    setCurrentStep((s) => Math.max(0, s - 1))
+    setCurrentStep((s) => Math.max(initialStep, s - 1))
   }
 
   function handleNext() {
-    setCurrentStep((s) => Math.min(148, s + 1))
+    const maxStep = initialStep + maxAdditionalStep
+    setCurrentStep((s) => Math.min(maxStep - 3, s + 1)) // minus 3 due to the 3 cards already on screen
   }
 
   return (
@@ -19,12 +28,14 @@ export function Stepper({ enableCry }: { enableCry: boolean }) {
         <div
           className="track"
           style={{
-            transform: `translateX(-${currentStep * (100 / 3)}%)`,
+            transform: `translateX(-${
+              (currentStep - initialStep) * (100 / 3)
+            }%)`,
           }}
         >
-          {Array.from({ length: 151 }, (_, i) => (
+          {Array.from({ length: maxAdditionalStep + 3 }, (_, i) => (
             <div key={i} className="slide">
-              <PokemonCard id={i + 1} enableCry={enableCry} />
+              <PokemonCard id={initialStep + i} enableCry={enableCry} />
             </div>
           ))}
         </div>

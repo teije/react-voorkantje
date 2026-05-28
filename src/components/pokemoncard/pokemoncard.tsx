@@ -35,7 +35,6 @@ export function PokemonCard({
   const [cardColor, setCardColor] = useState('#E5E5E5')
 
   function handlePokemonLoaded(data: PokemonData) {
-    console.log('Pokemon id' + id)
     setPokemon(data)
     setCardColor(TYPE_COLORS[data.types[0]] ?? '#E5E5E5')
   }

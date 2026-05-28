@@ -14,7 +14,7 @@ function App() {
         onCheckboxEnabled={setEnableCry}
       />
 
-      <Stepper enableCry={enableCry} />
+      <Stepper initialStep={152} maxAdditonalStep={100} enableCry={enableCry} />
     </>
   )
 }
