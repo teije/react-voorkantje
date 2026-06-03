@@ -23,7 +23,7 @@ export function Stepper({
   }
 
   const windowSize = VISIBLE_COUNT + BUFFER
-  const baseId = currentStep
+  const ids = Array.from({ length: windowSize }, (_, i) => initialStep + i)
 
   return (
     <div className="stepper">
@@ -36,9 +36,9 @@ export function Stepper({
             }%)`,
           }}
         >
-          {Array.from({ length: windowSize }, (_, i) => (
-            <div key={i} className="slide">
-              <PokemonCard id={baseId + i} enableCry={enableCry} />
+          {ids.map((id) => (
+            <div key={id} className="slide">
+              <PokemonCard id={id} enableCry={enableCry} />
             </div>
           ))}
         </div>
