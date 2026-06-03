@@ -4,23 +4,26 @@ import { PokemonCard } from '../pokemoncard/pokemoncard'
 
 export function Stepper({
   initialStep: initialStep,
-  maxAdditonalStep: maxAdditionalStep,
   enableCry,
 }: {
   initialStep: number
-  maxAdditonalStep: number
   enableCry: boolean
 }) {
   const [currentStep, setCurrentStep] = useState(initialStep)
+
+  const VISIBLE_COUNT = 3
+  const BUFFER = 3
 
   function handlePrevious() {
     setCurrentStep((s) => Math.max(initialStep, s - 1))
   }
 
   function handleNext() {
-    const maxStep = initialStep + maxAdditionalStep
-    setCurrentStep((s) => Math.min(maxStep - 3, s + 1)) // minus 3 due to the 3 cards already on screen
+    setCurrentStep((s) => s + 1)
   }
+
+  const windowSize = VISIBLE_COUNT + BUFFER
+  const baseId = currentStep
 
   return (
     <div className="stepper">
@@ -33,9 +36,9 @@ export function Stepper({
             }%)`,
           }}
         >
-          {Array.from({ length: maxAdditionalStep + 3 }, (_, i) => (
+          {Array.from({ length: windowSize }, (_, i) => (
             <div key={i} className="slide">
-              <PokemonCard id={initialStep + i} enableCry={enableCry} />
+              <PokemonCard id={baseId + i} enableCry={enableCry} />
             </div>
           ))}
         </div>

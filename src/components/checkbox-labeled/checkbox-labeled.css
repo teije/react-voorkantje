@@ -8,35 +8,30 @@
   cursor: pointer;
 }
 
-/* Label */
 .checkbox-label {
   font-size: 22px;
   color: #cfd6e6;
 }
 
-/* Hide native checkbox */
 .checkbox-row input {
   display: none;
 }
 
-/* Custom box */
 .checkmark {
   width: 20px;
   height: 20px;
   background: #2f3441;
   border: 2px solid #3a3f4b;
-  border-radius: 4px; /* square with slight rounding */
+  border-radius: 4px;
   position: relative;
   transition: all 0.2s ease;
 }
 
-/* Checked state */
 .checkbox-row input:checked + .checkmark {
   background: #3b82f6;
   border-color: #3b82f6;
 }
 
-/* Check icon */
 .checkmark::after {
   content: '';
   position: absolute;
@@ -50,12 +45,10 @@
   transition: transform 0.15s ease;
 }
 
-/* Show check */
 .checkbox-row input:checked + .checkmark::after {
   transform: rotate(45deg) scale(1);
 }
 
-/* Hover */
 .checkbox-row:hover .checkmark {
   border-color: #5a6070;
 }

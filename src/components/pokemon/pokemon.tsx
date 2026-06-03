@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { cache, useEffect, useRef, useState } from 'react'
 import './pokemon.css'
 
 export type PokemonData = {
@@ -11,6 +11,8 @@ export type PokemonData = {
   typeImages: string[]
   hp: number
 }
+
+const requestUrlAndResponseCache: Map<string, Promise<any>> = new Map()
 
 export function Pokemon({
   id: id,
@@ -41,7 +43,7 @@ export function Pokemon({
     return () => {
       cancelled = true
     }
-  }, [id, enableCry])
+  }, [id, enableCry, onLoaded])
 
   function loadCry(data: PokemonData) {
     audioRef.current = new Audio(data.cry)
@@ -77,13 +79,27 @@ export function Pokemon({
 }
 
 async function getPokemonById(id: number): Promise<PokemonData> {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id.toString()}`)
-  const data = await res.json()
+  const requestUrl = `https://pokeapi.co/api/v2/pokemon/${id}`
+
+  let request = tryGetResultFromCacheOrNull(requestUrl)
+
+  if (!request) {
+    request = fetch(requestUrl)
+
+    requestUrlAndResponseCache.set(requestUrl, request)
+  }
+
+  const response = await request
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Pokémon ${id}`)
+  }
+
+  const data = await response.clone().json()
 
   const types = data.types.map((t: { type: { name: string } }) => t.type.name)
 
   const typeImages = await getPokemonTypeImages(types)
-  const STATS_HP_INDEX = 0
 
   return {
     id: data.id,
@@ -91,21 +107,40 @@ async function getPokemonById(id: number): Promise<PokemonData> {
     frontImage: data.sprites.front_default,
     backImage: data.sprites.back_default,
     types,
-    cry: data.cries.legacy,
+    cry: data.cries?.legacy ?? '',
     typeImages,
-    hp: data.stats[STATS_HP_INDEX].base_stat,
+    hp: data.stats[0]?.base_stat ?? 0,
   }
 }
 
+function tryGetResultFromCacheOrNull(url: string): Promise<any> | null {
+  return requestUrlAndResponseCache.get(url) ?? null
+}
+
 async function getPokemonTypeImage(typeName: string): Promise<string | null> {
-  const res = await fetch(`https://pokeapi.co/api/v2/type/${typeName}`)
-  const data = await res.json()
+  const url = `https://pokeapi.co/api/v2/type/${typeName}`
+
+  let request = tryGetResultFromCacheOrNull(url)
+
+  if (!request) {
+    request = fetch(url)
+    requestUrlAndResponseCache.set(url, request)
+  }
+
+  const response = await request
+
+  if (!response.ok) {
+    return null
+  }
+
+  const data = await response.clone().json()
 
   return (
     data.sprites?.['generation-vii']?.['lets-go-pikachu-lets-go-eevee']
       ?.symbol_icon ?? null
   )
 }
+
 async function getPokemonTypeImages(types: string[]): Promise<string[]> {
   const images = await Promise.all(
     types.map((type) => getPokemonTypeImage(type)),
