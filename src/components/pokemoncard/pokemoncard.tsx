@@ -35,20 +35,28 @@ export function PokemonCard({
   const [cardColor, setCardColor] = useState('#E5E5E5')
 
   function handlePokemonLoaded(data: PokemonData) {
+    const baseColor = TYPE_COLORS[data.types[0]] ?? '#E5E5E5'
     setPokemon(data)
-    setCardColor(TYPE_COLORS[data.types[0]] ?? '#E5E5E5')
+    setCardColor(baseColor)
   }
 
   return (
-    <div className="pokemon-card" style={{ backgroundColor: cardColor }}>
+    <div
+      className="pokemon-card"
+      style={{
+        backgroundColor: `color-mix(in srgb, ${cardColor} 70%, white)`,
+      }}
+    >
       <strong className="stat-hp">HP: {pokemon?.hp}</strong>
-      <div className="image-frame">
+
+      <div
+        className="image-frame"
+        style={{ ['--accent-color' as any]: cardColor }}
+      >
         <Pokemon
           id={id}
           enableCry={enableCry}
-          onLoaded={(data) => {
-            handlePokemonLoaded(data)
-          }}
+          onLoaded={handlePokemonLoaded}
         />
       </div>
 
@@ -56,7 +64,12 @@ export function PokemonCard({
         <>
           <div className="types-row">
             {pokemon.typeImages.map((img, i) => (
-              <img className="pokemon-type-img" key={i} src={img} alt="type" />
+              <img
+                className="pokemon-type-img"
+                key={i}
+                src={img}
+                alt="type"
+              />
             ))}
           </div>
 

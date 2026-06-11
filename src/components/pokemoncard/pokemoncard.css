@@ -6,12 +6,36 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
   text-align: center;
   align-items: center;
+
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.pokemon-card h3,
+.pokemon-card i,
+.pokemon-card strong {
+  opacity: 0.85;
+}
+
+.stat-hp {
+  display: block;
+  text-align: right;
+}
+
+.types-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.pokemon-type-img {
+  width: 15%;
 }
 
 .image-frame {
-  background: white;
+  position: relative;
+  overflow: hidden;
+
   border: 4px solid #f5d300;
-  border-radius: 0;
 
   width: 90%;
   aspect-ratio: 4 / 3;
@@ -21,28 +45,55 @@
   justify-content: center;
 
   margin: 0 auto 8px auto;
+
+  /* layered "card texture" */
+  background:
+    /* fake grain */
+    radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    /* energy burst */
+    radial-gradient(
+        circle at 50% 50%,
+        white 0%,
+        var(--accent-color) 30%,
+        transparent 70%
+      ),
+    /* base color */ var(--accent-color);
+
+  background-size:
+    6px 6px,
+    100% 100%,
+    100% 100%;
+
+  /* inner glow */
+  box-shadow:
+    inset 0 0 20px rgba(255, 255, 255, 0.6),
+    inset 0 0 40px color-mix(in srgb, var(--accent-color) 60%, white);
 }
 
-.pokemon-card h3 {
-  text-transform: capitalize;
-  font-weight: bold;
-  color: darkslategrey;
+/* energy streak (like Charizard card) */
+.image-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.25) 40%,
+    transparent 60%
+  );
+
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-.pokemon-card i {
-  color: darkslategrey;
-}
+.image-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 
-.pokemon-card strong {
-  color: darkslategrey;
-  padding-bottom: 10px;
-}
+  background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.3) 100%);
 
-.pokemon-type-img {
-  width: 15%;
-}
-
-.stat-hp {
-  display: block;
-  text-align: right;
+  pointer-events: none;
 }
