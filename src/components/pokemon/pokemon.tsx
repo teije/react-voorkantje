@@ -1,4 +1,4 @@
-import { cache, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './pokemon.css'
 
 export type PokemonData = {
@@ -10,12 +10,13 @@ export type PokemonData = {
   cry: string
   typeImages: string[]
   hp: number
+  weight: number
 }
 
-const requestUrlAndResponseCache: Map<string, Promise<any>> = new Map()
+const cache: Map<string, Promise<any>> = new Map()
 
 export function Pokemon({
-  id: id,
+  id,
   enableCry,
   onLoaded,
 }: {
@@ -33,7 +34,11 @@ export function Pokemon({
     async function load() {
       const data = await getPokemonById(id)
       if (cancelled) return
-      if (enableCry) loadCry(data)
+
+      if (enableCry) {
+        audioRef.current = new Audio(data.cry)
+        audioRef.current.volume = 0.6
+      }
 
       setPokemon(data)
       onLoaded(data)
@@ -45,21 +50,14 @@ export function Pokemon({
     }
   }, [id, enableCry, onLoaded])
 
-  function loadCry(data: PokemonData) {
-    audioRef.current = new Audio(data.cry)
-    audioRef.current.volume = 0.6
-  }
-
-  function handleMouseEnter() {
+  function handleEnter() {
     setShowBack(true)
-
     if (!enableCry || !audioRef.current) return
-
     audioRef.current.currentTime = 0
     audioRef.current.play().catch(() => {})
   }
 
-  function handleMouseLeave() {
+  function handleLeave() {
     setShowBack(false)
   }
 
@@ -71,35 +69,27 @@ export function Pokemon({
         className="pokemon-image"
         src={showBack ? pokemon.backImage : pokemon.frontImage}
         alt={pokemon.name}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
       />
     </div>
   )
 }
 
 async function getPokemonById(id: number): Promise<PokemonData> {
-  const requestUrl = `https://pokeapi.co/api/v2/pokemon/${id}`
+  const url = `https://pokeapi.co/api/v2/pokemon/${id}`
 
-  let request = tryGetResultFromCacheOrNull(requestUrl)
-
-  if (!request) {
-    request = fetch(requestUrl)
-
-    requestUrlAndResponseCache.set(requestUrl, request)
+  let req = cache.get(url)
+  if (!req) {
+    req = fetch(url)
+    cache.set(url, req)
   }
 
-  const response = await request
+  const res = await req
+  const data = await res.clone().json()
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Pokémon ${id}`)
-  }
-
-  const data = await response.clone().json()
-
-  const types = data.types.map((t: { type: { name: string } }) => t.type.name)
-
-  const typeImages = await getPokemonTypeImages(types)
+  const types = data.types.map((t: any) => t.type.name)
+  const typeImages = await Promise.all(types.map(getTypeImage))
 
   return {
     id: data.id,
@@ -108,43 +98,26 @@ async function getPokemonById(id: number): Promise<PokemonData> {
     backImage: data.sprites.back_default,
     types,
     cry: data.cries?.legacy ?? '',
-    typeImages,
+    typeImages: typeImages.filter(Boolean),
     hp: data.stats[0]?.base_stat ?? 0,
+    weight: data.weight,
   }
 }
 
-function tryGetResultFromCacheOrNull(url: string): Promise<any> | null {
-  return requestUrlAndResponseCache.get(url) ?? null
-}
+async function getTypeImage(type: string) {
+  const url = `https://pokeapi.co/api/v2/type/${type}`
 
-async function getPokemonTypeImage(typeName: string): Promise<string | null> {
-  const url = `https://pokeapi.co/api/v2/type/${typeName}`
-
-  let request = tryGetResultFromCacheOrNull(url)
-
-  if (!request) {
-    request = fetch(url)
-    requestUrlAndResponseCache.set(url, request)
+  let req = cache.get(url)
+  if (!req) {
+    req = fetch(url)
+    cache.set(url, req)
   }
 
-  const response = await request
-
-  if (!response.ok) {
-    return null
-  }
-
-  const data = await response.clone().json()
+  const res = await req
+  const data = await res.clone().json()
 
   return (
     data.sprites?.['generation-vii']?.['lets-go-pikachu-lets-go-eevee']
       ?.symbol_icon ?? null
   )
-}
-
-async function getPokemonTypeImages(types: string[]): Promise<string[]> {
-  const images = await Promise.all(
-    types.map((type) => getPokemonTypeImage(type)),
-  )
-
-  return images.filter((img): img is string => Boolean(img))
 }
