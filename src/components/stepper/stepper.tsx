@@ -7,8 +7,10 @@ function getPokemonIdsInViewAndBuffer(
   visibleCount: number,
   buffer: number,
 ): number[] {
-  const total = visibleCount + buffer
-  return Array.from({ length: total }, (_, i) => startId + i)
+  const total = buffer + visibleCount + buffer // The total amount of cards consists of the visible amount + a buffer on the left and right
+  const bufferSubtractedFirstId = startId - buffer // The buffer is subtracted from the startId to account for the buffer on the left
+  const firstId = bufferSubtractedFirstId > 0 ? bufferSubtractedFirstId : 0
+  return Array.from({ length: total }, (_, i) => firstId + i)
 }
 
 function getSlideWidthPercent(visibleCount: number): number {
@@ -67,17 +69,21 @@ export function Stepper({
   const stepTranslate = getStepTranslatePercent(VISIBLE_COUNT)
 
   function getTransform(): string {
-    if (!isAnimating || !direction) return 'translateX(0)'
+    const baseOffset = -BUFFER * stepTranslate
+
+    if (!isAnimating || !direction) {
+      return `translateX(${baseOffset}%)`
+    }
 
     if (direction === 'next') {
-      return `translateX(-${stepTranslate}%)`
+      return `translateX(${baseOffset - stepTranslate}%)`
     }
 
     if (direction === 'prev') {
-      return `translateX(${stepTranslate}%)`
+      return `translateX(${baseOffset + stepTranslate}%)`
     }
 
-    return 'translateX(0)'
+    return `translateX(${baseOffset}%)`
   }
 
   function getTransition(): string {
