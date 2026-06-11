@@ -33,7 +33,7 @@ export function Stepper({
   const [direction, setDirection] = useState<'next' | 'prev' | null>(null)
 
   const VISIBLE_COUNT = 3
-  const BUFFER = 3
+  const BUFFER = 1
   const ANIMATION_DURATION = 300
   const MIN_POKEMON_ID = 1
 
